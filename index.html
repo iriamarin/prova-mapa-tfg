@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de prova TFG</title>
+    <style>
+        @import url("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
+
+        #map {
+            margin: 0 auto;
+            width: 80%;
+            min-height: 800px;
+            max-height: 400px;
+            height: 50%;
+        }
+
+        h1 {
+            color: royalblue;
+            font-family: 'Times New Roman';
+            text-align: center;
+        }
+
+        h2 {
+            color: rgb(1, 5, 16);
+            font-family: 'Times New Roman';
+            text-align: center;
+            font-size: 24px;
+        }
+
+        select {
+            margin-bottom: 20px;
+            margin-left: 20px;
+        }
+
+        .leaflet-popup-content img {
+            width: 100%;
+        }
+
+       
+        #bibliografiaIframe {
+            display: none;
+            width: 40%;
+            height: 400px;
+            border: 1px solid #ccc;
+            margin: 20px auto;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <h1>Pobles/ciutats de Catalunya en els que he estat (nomès alguns)</h1>
+    <h6> Per veure la info, la foto i la bibliografia no heu de seleccionar "selecciona_per_categories", al seleccionar
+        categoria nomès
+        apareixerà nom del lloc. Si al desplegar la info no es veu sencer perquè el poble està molt adalt, torneu a
+        clicar al marcador! </h6>
+    <select name="Viatja a un poble" id="selecciona_un_poble">
+        <option value="reset">Viatja a un poble</option>
+        <option value="40.8738764,0.3962883">Alfara de Carles</option>
+        <option value="41.1402787,1.3650599">Altafulla</option>
+        <option value="40.6968526,0.5421007">Amposta</option>
+        <option value="41.448369,2.2391071">Badalona</option>
+        <option value="41.7860209,0.7999401">Balaguer</option>
+        <option value="41.3926386,2.0577881">Barcelona</option>
+        <option value="41.0632561,1.041414">Cambrils</option>
+        <option value="40.719223,0.7199571">Deltebre</option>
+        <option value="41.2481976,0.8060872">Escaladei</option>
+        <option value="42.265267,2.9558291">Figueres</option>
+        <option value="41.7857789,1.2802005">Guissona</option>
+        <option value="41.054061,0.4288682">Gandesa</option>
+        <option value="40.9901421,0.9084284">Hospitalet de l'Infant</option>
+        <option value="42.3562315,1.4461089">La Seu d'Urgell</option>
+        <option value="41.00654,0.9335751">Miami Platja</option>
+        <option value="42.0679848,1.3014299">Oliana</option>
+        <option value="40.645736,0.6841312">Poble Nou del Delta</option>
+        <option value="42.4300025,1.9274367">Puigcerdà</option>
+        <option value="41.1476819,1.1025893">Reus</option>
+        <option value="40.7146845,0.4930566">Santa Barbara</option>
+        <option value="41.1174911,1.2465771">Tarragona</option>
+        <option value="41.558853,2.0095351">Terrassa</option>
+        <option value="40.8060928,0.5004178">Tortosa</option>
+        <option value="40.9089691,0.4719466">Xerta</option>
+    </select>
+    <select name="Selecciona per categories" id="selecciona_per_categories">
+        <option value="reset">Selecciona per categories</option>
+        <option
+            value='[{"lat":41.2481976,"lng":0.8060872,"info":"Escaladei"},{"lat":40.645736,"lng":0.6841312,"info":"Poble Nou del Delta"},{"lat":41.1402787,"lng":1.3650599,"info":"Altafulla"},{"lat": 42.4300025, "lng": 1.9274367, "info": "Puigcerdà"}]'>
+            llocs bonics</option>
+        <option
+            value='[{"lat":40.8738764,"lng":0.3962883,"info":"Alfara de Carles"},{"lat":40.6968526,"lng":0.5421007,"info":"Amposta"},{"lat":41.054061,"lng":0.4288682,"info":"Gandesa"}]'>
+            Jaciments en els que hem estat
+        </option>
+        <option
+            value='[{"lat":41.00654,"lng":0.9335751,"info":"Miami Platja"},{"lat":41.0632561,"lng":1.041414,"info":"Cambrils"},{"lat":41.1402787,"lng":1.3650599,"info":"Altafulla"},{"lat":40.9901421,"lng":0.9084284,"info":"Hospitalet de l`Infant"}]'>
+            playita guay</option>
+        <option
+            value='[{"lat":41.448369,"lng":2.2391071,"info":"Badalona"},{"lat":42.3562315,"lng":1.4461089,"info":"La Seu d Urgell"},{"lat":41.00654,"lng":0.9335751,"info":"Miami Platja"},{"lat":41.3926386,"lng":2.0577881,"info":"Barcelona"}]'>
+            familia</option>
+        <option
+            value='[{"lat":41.448369,"lng":2.2391071,"info":"Badalona"},{"lat":42.265267,"lng":2.9558291,"info":"Figueres"},{"lat":41.3926386,"lng":2.0577881,"info":"Barcelona"},{"lat":41.558853,"lng":2.0095351,"info":"Terrassa"},{"lat":41.7860209,"lng":0.7999401,"info":"Balaguer"}]'>
+            Campionats Hip Hop</option>
+    </select>
+
+    <div id="map"></div>
+    <iframe id="bibliografiaIframe" src="bibliografias.html"></iframe>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var map = L.map('map').setView([41.7697344, 1.4975706], 8);
+            var initialCoords = [41.7697344, 1.4975706];
+            var initialZoom = 8;
+
+            // Afegir mapa inicial, ortofoto del ICGC
+            L.tileLayer.wms('http://geoserveis.icgc.cat/servei/catalunya/orto-territorial/wms?', {
+                layers: 'ortofoto_color_2023',
+                attribution: '&copy; <a href="https://www.icgc.cat/">ICGC</a>',
+                CRS: 'EPSG:3857'
+            }).addTo(map);
+
+            //afegir capa amb noms del ICGC
+            var Capanoms = L.tileLayer.wms('https://geoserveis.icgc.cat/servei/catalunya/topografia-territorial/wms?', {
+                layers: '300_noms-geografics_t',
+                format: 'image/png',
+                transparent: true,
+                attribution: '&copy; <a href="https://www.icgc.cat/">ICGC</a>',
+                CRS: 'EPSG:3857'
+            }).addTo(map);
+
+            //Obrir apartat amb bibliografia
+            window.mostrarBibliografia = function (lugar) {
+                const iframe = document.getElementById('bibliografiaIframe');
+                iframe.style.display = 'block';
+                iframe.src = `bibliografias.html#bibliografia${lugar}`;
+                iframe.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            const goldIcon = new L.Icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+            // crear marcadors
+            const allMarkers = [
+                { lat: 40.8738764, lng: 0.3962883,  info: "Alfara de Carles", popup: `<h5> Alfara de Carles </h5><p> Vam estar a setmana santa excavant amb vosaltres a Malladarets i crec que no m'he rigut més en la meva vida. Anar a comprar amb els Titus contentos experiència 100% recomanable si vols riure i estar una setmana menjant tocino. </p><a href="#" onclick="mostrarBibliografia('Alfara de Carles')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Alfara_de_Carles1.jpg/480px-Alfara_de_Carles1.jpg">` },
+                { lat: 41.1402787, lng: 1.3650599, info: "Altafulla", popup: `<h5> Altafulla </h5><p> Vaig anar fent la ruta de GR de Tarragona-Torredembarra amb l'Aleix, l'Ander, el Guifré, l'Andreuot i la Candelita i ens ho vam passar. Platges boniques i el castell és xuli. A l'estació de tren es pot entrar sense pagar i si tens sort (i arriba el tren de Renfe) arribes fins a Tgn gratis :) </p><a href="#" onclick="mostrarBibliografia('Altafulla')">Ver bibliografía</a><img src="https://estaticos-cdn.prensaiberica.es/epc/epbrands/catalunya-al-teu-abast-2021/images/altafulla.jpg">` },
+                { lat: 40.6968526, lng: 0.5421007, info: "Amposta", popup: `<h5> Amposta </h5><p> No he vist gaire la veritat, però m'ho vaig passar molt bé. Em van robar la marca del coche una nit, però els hi perdono perquè sense voler ens vam emportar la clau d'una de les habitacions i no ens van dir res. Aquí vaig adonar-me que m'agrada l'arqueologia i dos dies + tard em vaig canviar al grau d'Història. El Racó és mitiquissim. Segons l'Ajuntament d'Amposta aquestes coordenades son les de l'Antic però en realitat al ampliar es veu que es nomès fins a on arribem en cotxe.  </p><a href="#" onclick="mostrarBibliografia('Amposta')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Amposta_-_53112907224.jpg/480px-Amposta_-_53112907224.jpg">` },
+                { lat: 41.448369, lng: 2.2391071, info: "Badalona", popup: `<h5> Badalona </h5><p> La meva mare i els meus tiets van neixer allà, tinc familia i, tot i que tinc por de que em robin nomès sortir al carrer, m'encanta anar a veure als meus cosins segons. Aquest any vam quedar 6ens al campionat Hip Hop International - Spain que es fa aquí així que ara li tinc encara més carinyo.   </p><a href="#" onclick="mostrarBibliografia('Badalona')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Dalt_la_Vila%2C_Badalona_%2851396450460%29.jpg/1280px-Dalt_la_Vila%2C_Badalona_%2851396450460%29.jpg">` },
+                { lat: 41.7860209, lng: 0.7999401, info: "Balaguer", popup: `<h5> Balaguer </h5><p> He anat unes quantes vegades, sobretot quan anavem al campionat de Hip Hop. No he vist gaire més enllà del teatre, un parc que hi ha enfront i algun bar-restaurant. M'agrada l'accent dels lleidatans  </p><a href="#" onclick="mostrarBibliografia('Balaguer')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Balaguer_-_Plaza_del_Mercadal_-_DSC_0614.JPG/1280px-Balaguer_-_Plaza_del_Mercadal_-_DSC_0614.JPG">` },
+                { lat: 41.3926386, lng: 2.0577881, info: "Barcelona", popup: `<h5> Barcelona </h5><p> Viatge poc original, tothom ha estat tot i que no ens agradi. M'estressen les grans ciutats i no se conduir en rotondes de 5 carrils. És on hi ha millors campionats de dansa i la meitat d'andorrans que volen cursar estudis universitaris. Fan de la Capibara del Cosmocaixa </p><a href="#" onclick="mostrarBibliografia('Barcelona')">Ver bibliografía</a><img src="https://d7lju56vlbdri.cloudfront.net/var/ezwebin_site/storage/images/noticias/la-covid-19-afecta-mas-a-las-zonas-pobres-de-la-ciudad-de-barcelona/8342679-1-esl-MX/La-COVID-19-afecta-mas-a-las-zonas-pobres-de-la-ciudad-de-Barcelona.jpg">` },
+                { lat: 41.0632561, lng: 1.041414, info: "Cambrils", popup: `<h5> Cambrils </h5><p> Nomès vaig quan he d'anar a solucionar problemes amb els de Movistar. Vaig anar al acabar batx amb les meves millors amigues i vam passar una gran setmana. Vaig anar a urgencies, em van enviar a casa amb Ibuprofeno i al tornar a Andorra em van dir que havia d'estar morint-me del dolor, em van drogar i em van confinar, llavors li guardo una mica de rencor :( . </p><a href="#" onclick="mostrarBibliografia('Cambrils')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Cambrils%2C_Passeig_Maritim.jpg/1920px-Cambrils%2C_Passeig_Maritim.jpg">` },
+                { lat: 40.719223, lng: 0.7199571, info: "Deltebre", popup: `<h5> Deltebre </h5><p> La mama i el Jordi (la seva parella i pare de la meva germana) es van comprar una casa a Jesús i Maria i ara passo per aquí els caps de setmana. El riu es preciós i m'encanta anar a la vora a veure la posta de sol, però cada cop que vinc em gasto un pot d'anti-mosquits i encara aixì em piquen. Com a poblet un 10/10 i la gent és maquissima. Hi ha una fleca que es diu "Germans Marín" i em fa ilu. Se m'estan pegant paraules del dialecte de les Terres de l'Ebre i als meus amics d'Andorra no els hi fa gràcia.  </p><a href="#" onclick="mostrarBibliografia('Deltebre')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Esgl%C3%A8sia_JiM_01.jpg/1920px-Esgl%C3%A8sia_JiM_01.jpg">` },
+                { lat: 42.265267, lng: 2.9558291, info: "Fuigueres", popup: `<h5> Figueres </h5><p> Dels pocs pobles de Girona en els que he estat. Soliem anar a un campionat de dansa que feien i on ens vam classificar pels europeus. El museu de Dalí està bé però des que el Professor Carbonell ens va explicar cosestes d'ell ja no el veig igual.   </p><a href="#" onclick="mostrarBibliografia('Figueres')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Dal%C3%AD_Museum_in_Figueres.jpg/1280px-Dal%C3%AD_Museum_in_Figueres.jpg">` },
+                { lat: 41.2481976, lng: 0.8060872, info: "Escaladei", popup: `<h5> Escaladei </h5><p> Vam anar d'excursió un dia la Maria Vakli, la Candela i jo i ens ho vam passar súper. La Cartoixa d'Escaladei ens va encantar. Les carreteres per arribar-hi em van recordar a les de les parroquies altes d'Andorra i durant el viatge vam riure un munt.  </p><a href="#" onclick="mostrarBibliografia('Escaladei')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Escaladei.png/480px-Escaladei.png">` },
+                { lat: 41.054061, lng: 0.4288682, info: "Gandesa", popup: `<h5> Gandesa </h5><p> La Maria Darder i jo vam anar 3 dies a excavar al Coll del Moro abans de començar a treballar al Juliol i tot i que ens va costar socialitzar amb la gent ens ho vam acabar passant molt guay. Va estar molt guay prospectar per les granjes de Tocino amb els compis.  </p><a href="#" onclick="mostrarBibliografia('Gandesa')">Ver bibliografía</a><img src="https://cdn-patrimoni.atmosfera.net/sites/default/files/styles/slideshows_fitxes/public/coll_del_moro_aeria2_2.jpg?itok=0PxiJPu7">` },
+                { lat: 41.7857789, lng: 1.2802005, info: "Guissona", popup: `<h5> Guissona </h5><p> Parada mitiquissima dels andorrans que venim a Tgn o Bcn. Sempre acabes pillant un camió a 10 km/h al que no pots adelantar en 10 minuts. El Bon Area no defrauda mai. El museu de Guissona 100% recomanable </p><a href="#" onclick="mostrarBibliografia('Guissona')">Ver bibliografía</a><img src="https://www.viaempresa.cat/uploads/s1/26/23/30/33/bon-area.jpeg">` },
+                { lat: 40.9901421, lng: 0.9084284, info: "Hospitalet de l'Infant", popup: `<h5> Hospitalet de l'Infant </h5><p> M'encanta agafar la bici i anar pel paseu maritim des de Miami fins aquí o més enllà quan estic estressada pels examens. Quan anava a la uni en tren havia d'agafar-lo a l'estació d'aquí a les 6h (sempre tard) perquè a Miami no hi ha estació de tren. Un any vaig venir aquí de viatje de final de curs amb el cole :/ </p><a href="#" onclick="mostrarBibliografia('HospitaletdelInfant')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/DJI_05992_Moment.jpg/1920px-DJI_05992_Moment.jpg">` },
+                { lat: 42.3562315, lng: 1.4461089, info: "La Seu d'Urgell", popup: `<h5> La Seu d'Urgell </h5><p> Aquí viuen els meus cosins grans. Tots els andorrans soliem baixar aquí a comprar al Mercadona i que ens descontessin a la Duana els impostos, ara ja no val la pena. Cada cop viuen més andorrans aquí per els preus elevats de l'habitatge a Andorra, al final ens farem amb la ciutat. EL bisbe de la Seu d'Urgell em cau malament, com a cooprincep d'Andorra s'oposa a l'avortament i per això encara és ilegal a Andorra  </p><a href="#" onclick="mostrarBibliografia('LaSeudUrgell')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/La_Seu_d%27Urgell_%28Torre_Solsona%29.JPG/480px-La_Seu_d%27Urgell_%28Torre_Solsona%29.JPG">` },
+                { lat: 41.00654, lng: 0.9335751, info: "Miami Platja", popup: `<h5> Miami Platja </h5><p> Ara visc aquí (menys en vacances). Es diu Miami Platja per no dir-se ciutats de vacances d'Andorrans i Alemanys. Els yayos es van comprar aquí una casa quan jo tenia 3 anys per recomanació del meu otorrino i des de petits ens quedavem tots els cosins aquí a passar tot l'estiu amb els avis. M'encanta viure aquí i m'he fet un tatu per recordar-m'ho i acabo tornant a Andorra.   </p><a href="#" onclick="mostrarBibliografia('MiamiPlatja')">Ver bibliografía</a><img src="https://www.beachrex.com/img/beaches/ES-165b-k-catalonia/ES-165b-k-catalonia-sl2.jpg">` },
+                { lat: 42.0679848, lng: 1.3014299, info: "Oliana", popup: `<h5> Oliana </h5><p> Mesuro la sequia de Catalunya a través del seu pantà. Al passar el poble hi ha un tractor fet de palla molt bonic i quan passem amb l'Aleix sempre li porto la contraria dient-li que és un tren.   </p><a href="#" onclick="mostrarBibliografia('Oliana')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Pant%C3%A0_i_presa_d%27Oliana_-_1.jpg/450px-Pant%C3%A0_i_presa_d%27Oliana_-_1.jpg">` },
+                { lat: 40.645736, lng: 0.6841312, info: "Poble Nou del Delta", popup: `<h5> Poble Nou del Delta </h5><p> Qui em coneix sap que m'encanten les palmeres i aquí hi ha moltes. Poble bonic, tampoc hi ha gaire a dir. Planazo venir aquí a passejar o anar en bici pel poble amb algú per passar la tarda.S </p><a href="#" onclick="mostrarBibliografia('PobleNoudelDelta')">Ver bibliografía</a><img src="https://inmobiliaria-deltadelebro.com/images/noticias/vivir_en_poblenou_del_delta/Finques-Zaragoza-PobleNou-1_convertit.jpg">` },
+                { lat: 42.4300025, lng: 1.9274367, info: "Puigcerdà", popup: `<h5> Puigcerdà </h5><p> Em recorda al tipic poble francès o alemany. Quan es congela el llac és preciós.  </p><a href="#" onclick="mostrarBibliografia('Puigcerdà')">Ver bibliografía</a><img src="https://www.guiarepsol.com/content/dam/repsol-guia/guia-cf/ubicacion/localidad/imagenes/media-filer_public-3e-0e-3e0e58da-654d-47f9-ab79-c93891143b5e-wlm14es_-_villa_paulita_antiga_torre_volart_estany_i_parc_schierbeck_puigcerda_-_cerdanya_-_maria_rosa_ferre_1.jpg.transform/rp-rendition-lg/image.jpg">` },
+                { lat: 41.1476819, lng: 1.1025893, info: "Reus", popup: `<h5> Reus </h5><p> Nomès vaig per sortir de festa o per estar amb la Candelita o la Maria Vakli. Me'l conec més de nit que de dia. És com Tarragona però sense platja (si els de classe llegeixen això m'expulsen), però l'urbanisme està guay. Segons la Maria es millor que el meu país, però res a veure. Encara així li tinc carinyo perquè les personetes que m'han acollit com part de la seva familia són d'aquí.   </p><a href="#" onclick="mostrarBibliografia('Reus')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/7/79/Pla%C3%A7a_de_les_peixateries_velles_2_%282%29.jpg">` },
+                { lat: 40.7146845, lng: 0.4930566, info: "Santa Barbara", popup: `<h5> Santa Barbara </h5><p> Vam anar un dia a veure que hi havia per allí, i al arribar ens vam perdre perquè tots els carrers son iguals. Semblava un lloc tranquilet per viure. Molt semblant a Jesús i Maria.  </p><a href="#" onclick="mostrarBibliografia('Santa Barbara')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/7/79/Pla%C3%A7a_de_les_peixateries_velles_2_%282%29.jpg">` },
+                { lat: 41.1174911, lng: 1.2465771, info: "Tarragona", popup: `<h5> Tarragona </h5><p> Venir a estudiar aquí en comptes de a Bcn o a França és una de les millors decisions de la meva vida. M'ho estic passant pipa i em sento com a casa, fins al punt de no saber si vull tornar a viure a Andorra, tot i que em van explicar el problema que teniu aquí amb la contaminació i això em tira una mica enrere. Sempre hi ha algo a fer per aquí i segur que en bona companyia. </p><a href="#" onclick="mostrarBibliografia('Tarragona')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Amphith%C3%A9%C3%A2tre_de_Tarragona.jpg">` },
+                { lat: 41.558853, lng: 2.0095351, info: "Terrassa", popup: `<h5> Terrassa </h5><p> Anem cada any a un campionat de Hip Hop d'aquí i m'ho passo genial tot el cap de setmana amb els meus compis de dansa. Crec que és una de les meves ciutats preferides de Barcelona. </p><a href="#" onclick="mostrarBibliografia('Terrassa')">Ver bibliografía</a><img src="https://media.istockphoto.com/id/500595490/es/foto/amanecer-en-terrassa.jpg?s=2048x2048&w=is&k=20&c=8s_1I03ILtEAtHKWXGUGw47qIfq-ypj1kXsC3rTtUyI=">` },
+                { lat: 40.8060928, lng: 0.5004178, info: "Tortosa", popup: `<h5> Tortosa </h5><p> Vaig sobint i cada dia m'agrada més 😌. De petita pensava que Tortosa i Toulouse (Tolosa en català) era el mateix. Anar a fer un picnic al parc i passar la tarda allà és un planazo.  </p><a href="#" onclick="mostrarBibliografia('Tortosa')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Castell_de_la_Suda_de_Tortosa.jpg/1280px-Castell_de_la_Suda_de_Tortosa.jpg">` },
+                { lat: 40.9089691, lng: 0.4719466, info: "Xerta", popup: `<h5> Xerta </h5><p> No he estat mai fisicament allà però gràcies a un company de classe em conec absolutament tota petita anecdota relacionada amb el poble.   </p><a href="#" onclick="mostrarBibliografia('Xerta')">Ver bibliografía</a><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Xerta_-_53115777407.jpg/1920px-Xerta_-_53115777407.jpg">` },
+
+            ];
+
+            // Afegir tots els marcadors al mapa amb els PopUp (info) i mostrar tots els marcadors al inciar la pàgina
+            function addAllMarkers() {
+                allMarkers.forEach(marker => {
+                    L.marker([marker.lat, marker.lng],{icon: goldIcon}).addTo(map).bindPopup(marker.popup);
+                });
+            }
+            addAllMarkers();
+
+            //Funcionament del Viatja per pobles
+            document.getElementById("selecciona_un_poble").addEventListener('change', function (e) {
+                if (e.target.value === "reset") {
+                    map.setView(initialCoords, initialZoom);
+                } else if (e.target.value !== "0") {
+                    let coords = e.target.value.split(",").map(Number);
+                    map.flyTo(coords, 15);
+                }
+            });
+
+            // Afegir tots els marcadors al seleccionar "seleccionar_per_categories"
+            document.getElementById("selecciona_per_categories").addEventListener('change', function (e) {
+                if (e.target.value === "reset") {
+                    map.eachLayer(function (layer) {
+                        if (layer instanceof L.Marker) {
+                            map.removeLayer(layer);
+                        }
+                    });
+                    // Tornar a afegir tots els marcadors
+                    addAllMarkers();
+                } else {
+
+                    // Borrar tots els marcadors al canviar categoria
+                    map.eachLayer(function (layer) {
+                        if (layer instanceof L.Marker) {
+                            map.removeLayer(layer);
+                        }
+                    });
+
+                    // Afegir els marcadors de la categoria seleccionada
+                    let coordsArray = JSON.parse(e.target.value);
+                    coordsArray.forEach(coords => {
+                        L.marker([coords.lat, coords.lng]).addTo(map).bindPopup(`
+                            <h5> ${coords.info} </h5>
+                        `);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
